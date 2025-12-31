@@ -2,17 +2,14 @@ FROM node:22-slim
 
 # Install dependencies and fetch Amass binary
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates wget curl unzip \
+    && apt-get install -y --no-install-recommends ca-certificates wget unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN set -e; \
-    AMASS_URL=$(curl -s https://api.github.com/repos/OWASP/Amass/releases/latest | grep "browser_download_url.*linux_amd64.zip" | head -n1 | cut -d '"' -f4); \
-    echo "Downloading $AMASS_URL"; \
-    wget -O /tmp/amass.zip "$AMASS_URL"; \
-    unzip /tmp/amass.zip -d /tmp; \
-    mv /tmp/amass_linux_amd64/amass /usr/local/bin/amass; \
-    chmod +x /usr/local/bin/amass; \
-    rm -rf /tmp/amass*;
+RUN wget -q https://github.com/owasp-amass/amass/releases/latest/download/amass_Linux_amd64.zip -O /tmp/amass.zip \
+    && unzip /tmp/amass.zip -d /tmp \
+    && mv /tmp/amass_Linux_amd64/amass /usr/local/bin/amass \
+    && chmod +x /usr/local/bin/amass \
+    && rm -rf /tmp/amass* /var/lib/apt/lists/*
 
 WORKDIR /app
 
