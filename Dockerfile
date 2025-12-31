@@ -5,9 +5,9 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates wget unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -q https://github.com/owasp-amass/amass/releases/latest/download/amass_Linux_amd64.zip -O /tmp/amass.zip \
+RUN wget -q https://github.com/owasp-amass/amass/releases/latest/download/amass_linux_amd64.zip -O /tmp/amass.zip \
     && unzip /tmp/amass.zip -d /tmp \
-    && mv /tmp/amass_Linux_amd64/amass /usr/local/bin/amass \
+    && mv /tmp/amass_linux_amd64/amass /usr/local/bin/amass \
     && chmod +x /usr/local/bin/amass \
     && rm -rf /tmp/amass* /var/lib/apt/lists/*
 
