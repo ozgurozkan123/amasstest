@@ -1,11 +1,16 @@
 FROM node:22-slim
 
-# Install system dependencies and Amass
+# Install dependencies and Amass binary
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       ca-certificates \
-       amass \
+    && apt-get install -y --no-install-recommends ca-certificates wget \
     && rm -rf /var/lib/apt/lists/*
+
+ENV AMASS_VERSION=5.0.1
+RUN wget -q https://github.com/owasp-amass/amass/releases/download/v${AMASS_VERSION}/amass_Linux_amd64.tar.gz -O /tmp/amass.tar.gz \
+    && tar -xzf /tmp/amass.tar.gz -C /tmp \
+    && mv /tmp/amass_Linux_amd64/amass /usr/local/bin/amass \
+    && chmod +x /usr/local/bin/amass \
+    && rm -rf /tmp/amass.tar.gz /tmp/amass_Linux_amd64
 
 WORKDIR /app
 
@@ -15,7 +20,7 @@ RUN npm install -g pnpm@8.15.7
 # Copy manifest files
 COPY package.json ./
 
-# Install dependencies (no lockfile present; will resolve fresh)
+# Install dependencies
 RUN pnpm install --frozen-lockfile=false
 
 # Copy source
