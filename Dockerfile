@@ -1,15 +1,12 @@
 FROM node:22-slim
 
-# Install dependencies and fetch Amass binary
+# Install dependencies and Go (for building Amass)
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates wget unzip \
+    && apt-get install -y --no-install-recommends ca-certificates wget unzip golang \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -q https://github.com/owasp-amass/amass/releases/latest/download/amass_linux_amd64.zip -O /tmp/amass.zip \
-    && unzip /tmp/amass.zip -d /tmp \
-    && mv /tmp/amass_linux_amd64/amass /usr/local/bin/amass \
-    && chmod +x /usr/local/bin/amass \
-    && rm -rf /tmp/amass* /var/lib/apt/lists/*
+# Install Amass via Go modules
+RUN GOBIN=/usr/local/bin GO111MODULE=on go install github.com/owasp-amass/amass/v4/...@latest
 
 WORKDIR /app
 
